@@ -59,34 +59,34 @@ DB_IDENTITY=$($ECHO $DESTINATION | $CUT -f2 -d@)
 $ECHO "Clear the existing DB's cache to save disk space..."
 $DRUSH $DESTINATION cc all
 
-$ECHO "Saving a backup of the existing database..."
+$ECHO "Saving a backup of the existing destination database..."
 $DRUSH $DESTINATION sql-dump --create-db | $GZIP > ~/$DESTINATION.dump.mysql.gz
 
-$ECHO "Clear it..."
+$ECHO "About to drop all tables in the destination database..."
 $DRUSH $DESTINATION sql-drop
 
-$ECHO "Clear the source's cache to speed syncing..."
+$ECHO "Clear the source site's cache to speed syncing..."
 $DRUSH $SOURCE cc all
 
-$ECHO "Sync the source DB to the destination..."
+$ECHO "Sync the source site's database to the destination..."
 $DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore $SOURCE $DESTINATION
 
 if [ -n "$MODULES_DISABLE" ]; then
-  $ECHO "Disabling modules not needed for development..."
+  $ECHO "Disabling modules not needed on the development site..."
   $DRUSH $DESTINATION dis $MODULES_DISABLE
 fi
 
-$ECHO "Enabling modules for development..."
+$ECHO "Enabling the destination's development modules..."
 $DRUSH $DESTINATION en devel syslog update
 
-$ECHO "Set the logging identity and facility..."
+$ECHO "Set the destination's logging identity and facility..."
 $DRUSH $DESTINATION vset syslog_identity drupal-$DB_IDENTITY
 $DRUSH $DESTINATION vset syslog_facility $LOG_LOCAL0
 
-$ECHO "Turn on error reporting..."
+$ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
 
-$ECHO "Clearing the cache on the destination..."
+$ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
 
 $ECHO "Updating the files directory..."
