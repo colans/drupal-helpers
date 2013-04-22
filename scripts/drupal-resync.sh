@@ -84,6 +84,10 @@ fi
 $ECHO "Enabling the destination's development modules..."
 $DRUSH $DESTINATION en $CONFIRMATION devel syslog update
 
+$ECHO "Disabling the destination's CSS & JavaScript caching..."
+$DRUSH $DESTINATION vset preprocess_css 0
+$DRUSH $DESTINATION vset preprocess_js 0
+
 $ECHO "Set the destination's logging identity and facility..."
 $DRUSH $DESTINATION vset syslog_identity drupal-$DB_IDENTITY
 $DRUSH $DESTINATION vset syslog_facility $LOG_LOCAL0
