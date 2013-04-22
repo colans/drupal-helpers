@@ -33,6 +33,11 @@ ECHO=/bin/echo
 DATE=/bin/date
 CHGRP=/bin/chgrp
 
+# Disable confirmation questions?  It's on by default.  Turning it off with "-y"
+# is dangerous.  You've been warned!
+#CONFIRMATION="-y"
+CONFIRMATION=""
+
 # Set the web user.
 USER_WEB=www-data
 
@@ -63,21 +68,21 @@ $ECHO "Saving a backup of the existing destination database..."
 $DRUSH $DESTINATION sql-dump --create-db | $GZIP > ~/$DESTINATION.dump.mysql.gz
 
 $ECHO "About to drop all tables in the destination database..."
-$DRUSH $DESTINATION sql-drop
+$DRUSH $DESTINATION $CONFIRMATION sql-drop
 
 $ECHO "Clear the source site's cache to speed syncing..."
 $DRUSH $SOURCE cc all
 
 $ECHO "Sync the source site's database to the destination..."
-$DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore $SOURCE $DESTINATION
+$DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
 
 if [ -n "$MODULES_DISABLE" ]; then
   $ECHO "Disabling modules not needed on the development site..."
-  $DRUSH $DESTINATION dis $MODULES_DISABLE
+  $DRUSH $DESTINATION dis $CONFIRMATION $MODULES_DISABLE
 fi
 
 $ECHO "Enabling the destination's development modules..."
-$DRUSH $DESTINATION en devel syslog update
+$DRUSH $DESTINATION en $CONFIRMATION devel syslog update
 
 $ECHO "Set the destination's logging identity and facility..."
 $DRUSH $DESTINATION vset syslog_identity drupal-$DB_IDENTITY
@@ -90,7 +95,7 @@ $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
 
 $ECHO "Updating the files directory..."
-$DRUSH rsync $SOURCE:%files $DESTINATION:%files
+$DRUSH rsync $CONFIRMATION $SOURCE:%files $DESTINATION:%files
 $CHGRP -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
 
 $ECHO "All done!"
