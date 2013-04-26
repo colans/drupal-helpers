@@ -50,10 +50,10 @@ if [ -z "$2" ]; then
   return 1
 fi
 
-# Set variables from arguments.
+# Set variables with defaults and arguments.
 SOURCE=$1
 DESTINATION=$2
-MODULES_DISABLE=$3
+MODULES_DISABLE="backup_migrate performance $3"
 
 $ECHO "Start time: $($DATE +%T)"
 
@@ -76,12 +76,10 @@ $DRUSH $SOURCE cc all
 $ECHO "Sync the source site's database to the destination..."
 $DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
 
-if [ -n "$MODULES_DISABLE" ]; then
-  $ECHO "Disabling modules not needed on the development site..."
-  $DRUSH $DESTINATION dis $CONFIRMATION $MODULES_DISABLE
-fi
+$ECHO "Disabling modules not meant for development..."
+$DRUSH $DESTINATION dis $CONFIRMATION $MODULES_DISABLE
 
-$ECHO "Enabling the destination's development modules..."
+$ECHO "Enabling extra modules for development..."
 $DRUSH $DESTINATION en $CONFIRMATION devel syslog update
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
