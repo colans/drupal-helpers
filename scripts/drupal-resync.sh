@@ -74,7 +74,7 @@ $ECHO "Clear the source site's cache to speed syncing..."
 $DRUSH $SOURCE cc all
 
 $ECHO "Sync the source site's database to the destination..."
-$DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
+$DRUSH sql-sync --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
 
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis $CONFIRMATION $MODULES_DISABLE
