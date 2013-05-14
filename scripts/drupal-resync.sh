@@ -77,10 +77,10 @@ $ECHO "Sync the source site's database to the destination..."
 $DRUSH sql-sync --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
 
 $ECHO "Disabling modules not meant for development..."
-$DRUSH $DESTINATION dis $CONFIRMATION $MODULES_DISABLE
+$DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION en $CONFIRMATION devel syslog update
+$DRUSH $DESTINATION en -y devel syslog update
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
