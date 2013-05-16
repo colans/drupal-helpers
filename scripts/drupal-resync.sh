@@ -70,10 +70,10 @@ $DRUSH $DESTINATION sql-dump --create-db | $GZIP > ~/$DESTINATION.dump.mysql.gz
 $ECHO "About to drop all tables in the destination database..."
 $DRUSH $DESTINATION $CONFIRMATION sql-drop
 
-$ECHO "Clear the source site's cache to speed syncing..."
-$DRUSH $SOURCE cc all
-
 $ECHO "Sync the source site's database to the destination..."
+# Skipping cache tables until https://drupal.org/node/1446454 gets fixed.
+# This will make the dump bigger, but it's safer that wiping the cache on Prod first.
+#$DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
 $DRUSH sql-sync --skip-tables-key=ignore $CONFIRMATION $SOURCE $DESTINATION
 
 $ECHO "Disabling modules not meant for development..."
