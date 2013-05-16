@@ -53,7 +53,7 @@ fi
 # Set variables with defaults and arguments.
 SOURCE=$1
 DESTINATION=$2
-MODULES_DISABLE="backup_migrate performance $3"
+MODULES_DISABLE="backup_migrate performance entitycache $3"
 
 $ECHO "Start time: $($DATE +%T)"
 
