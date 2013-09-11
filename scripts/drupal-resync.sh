@@ -18,6 +18,7 @@
 #   * Devel is installed.
 #   * The logging channel ID is as below on the target machine.
 #   * Rsync defaults are set appropriately in your Drush aliases.
+#   * The Drupal administrator role (with all permissions) is "administrator".
 # Author:
 #   Colan Schwartz - http://colans.net/
 # Licence:
@@ -102,6 +103,10 @@ $DRUSH $DESTINATION cc all
 $ECHO "Updating the files directory..."
 $DRUSH rsync $CONFIRMATION $SOURCE:%files $DESTINATION:%files
 $CHGRP -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
+
+$ECHO "Creating an administrator user with your username..."
+$DRUSH $DESTINATION user-create $USER --mail="$USER@example.com" --password="letmein"
+$DRUSH $DESTINATION user-add-role administrator --name=$USER
 
 $ECHO "All done!"
 $ECHO "End time: $($DATE +%T)"
