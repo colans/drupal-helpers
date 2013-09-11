@@ -57,7 +57,7 @@ DESTINATION=$2
 
 # Set some modules to disable.
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
-MODULES_DISABLE="backup_migrate performance entitycache $MODULES_ADVAGG $3"
+MODULES_DISABLE="backup_migrate performance entitycache overlay toolbar $MODULES_ADVAGG $3"
 
 $ECHO "Start time: $($DATE +%T)"
 
@@ -84,7 +84,7 @@ $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION en -y devel syslog update
+$DRUSH $DESTINATION en -y devel syslog update admin_menu
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
