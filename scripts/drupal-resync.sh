@@ -99,6 +99,9 @@ $DRUSH $DESTINATION php-eval "variable_set('file_temporary_path', '/tmp')"
 $ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
 
+$ECHO "Disable user-initiated cron runs..."
+$DRUSH $DESTINATION php-eval "variable_set('cron_safe_threshold', '0')"
+
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
 
