@@ -32,7 +32,8 @@ CUT=/usr/bin/cut
 GREP=/bin/grep
 ECHO=/bin/echo
 DATE=/bin/date
-CHGRP=/bin/chgrp
+SUDO=/usr/bin/sudo
+CHOWN=/bin/chown
 
 # Disable confirmation questions?  It's on by default.  Turning it off with "-y"
 # is dangerous.  You've been warned!
@@ -102,7 +103,7 @@ $DRUSH $DESTINATION cc all
 
 $ECHO "Updating the files directory..."
 $DRUSH rsync $CONFIRMATION $SOURCE:%files $DESTINATION:%files
-$CHGRP -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
+$SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
 
 $ECHO "Creating an administrator user with your username..."
 $DRUSH $DESTINATION user-create $USER --mail="$USER@example.com" --password="letmein"
