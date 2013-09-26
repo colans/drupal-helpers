@@ -91,9 +91,10 @@ $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
 $DRUSH $DESTINATION vset preprocess_js 0
 
-$ECHO "Set the destination's logging identity and facility..."
+$ECHO "Set the destination's logging identity, facility and temporary directory..."
 $DRUSH $DESTINATION vset syslog_identity drupal-$DB_IDENTITY
 $DRUSH $DESTINATION vset syslog_facility $LOG_LOCAL0
+$DRUSH $DESTINATION php-eval "variable_set('file_temporary_path', '/tmp')"
 
 $ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
