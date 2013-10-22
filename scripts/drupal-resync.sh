@@ -85,6 +85,9 @@ $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
 $DRUSH $DESTINATION registry-rebuild
 
+$ECHO "Revert all features to those in the code..."
+$DRUSH $DESTINATION features-revert-all -y
+
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
