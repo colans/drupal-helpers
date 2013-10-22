@@ -81,6 +81,10 @@ $ECHO "Sync the source site's database to the destination..."
 #$DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore --sanitize $CONFIRMATION $SOURCE $DESTINATION
 $DRUSH sql-sync --skip-tables-key=ignore --sanitize $CONFIRMATION $SOURCE $DESTINATION
 
+$ECHO "Rebuild the registry in case file locations have changed..."
+$DRUSH dl -y registry_rebuild
+$DRUSH $DESTINATION registry-rebuild
+
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
