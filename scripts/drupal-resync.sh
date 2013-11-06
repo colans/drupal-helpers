@@ -86,6 +86,8 @@ $DRUSH dl -y registry_rebuild
 $DRUSH $DESTINATION registry-rebuild
 
 $ECHO "Revert all features to those in the code..."
+# We need the cache-clear for https://drupal.org/node/1822278.
+$DRUSH $DESTINATION cc all
 $DRUSH $DESTINATION features-revert-all -y
 
 $ECHO "Disabling modules not meant for development..."
