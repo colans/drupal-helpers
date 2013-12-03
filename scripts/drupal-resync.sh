@@ -115,6 +115,9 @@ $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLA
 $ECHO "Disable user-initiated cron runs..."
 $DRUSH $DESTINATION php-eval "variable_set('cron_safe_threshold', '0')"
 
+$ECHO "Updating the database schema..."
+$DRUSH $DESTINATION updb
+
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
 
