@@ -68,5 +68,4 @@ $aliases['default'] = array(
     ),
   ),
 );
-?>
 
