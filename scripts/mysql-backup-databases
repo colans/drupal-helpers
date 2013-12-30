@@ -60,7 +60,9 @@ do
   DATE=$(date "+%y%m%d%H%M")
   DST_FILE="$BACKUPDIR/$DATABASE-$DATE.sql.gz"
   LINK_TARGET="$BACKUPDIR/$DATABASE-LATEST.sql.gz"
-  mysqldump $OPTS $IGNORETABLES $DATABASE | gzip > $DST_FILE
+# Should probably truncate these tables afterwards instead.
+#  mysqldump $OPTS $IGNORETABLES $DATABASE | gzip > $DST_FILE
+  mysqldump $OPTS $DATABASE | gzip > $DST_FILE
   chmod 440 $DST_FILE
   chgrp $owner_group $DST_FILE
   ln -sf $DST_FILE $LINK_TARGET
