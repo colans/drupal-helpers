@@ -86,6 +86,9 @@ $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
 $DRUSH $DESTINATION registry-rebuild
 
+$ECHO "Updating the database schema..."
+$DRUSH $DESTINATION updatedb -y
+
 $ECHO "Revert all features to those in the code..."
 # We need the cache-clear for https://drupal.org/node/1822278.
 $DRUSH $DESTINATION cc all
@@ -114,9 +117,6 @@ $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLA
 
 $ECHO "Disable user-initiated cron runs..."
 $DRUSH $DESTINATION php-eval "variable_set('cron_safe_threshold', '0')"
-
-$ECHO "Updating the database schema..."
-$DRUSH $DESTINATION updb
 
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
