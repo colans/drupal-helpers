@@ -2,10 +2,13 @@
 #############################################################################
 # Filename:
 #   drupal-resync
+#
 # Purpose:
 #   Resynchronize a Drupal development site from Staging, Production, etc.
+#
 # Usage:
 #   drupal-resync <SOURCE_DRUSH_ALIAS> <DESTINATION_DRUSH_ALIAS> [<MODULES_DISABLE>]
+#
 # Parameters:
 #   <SOURCE_DRUSH_ALIAS>:      The site from which to copy the database. Required.
 #   <DESTINATION_DRUSH_ALIAS>: The site to which the database should be copied. Required.
@@ -19,6 +22,12 @@
 #   * The logging channel ID is as below on the target machine.
 #   * Rsync defaults are set appropriately in your Drush aliases.
 #   * The Drupal administrator role (with all permissions) is "administrator".
+#
+# Enhancements:
+#   * If you'd like to see database synchronization progress, install the Pipe
+#     Viewer utility.  See https://drupal.org/project/drush_sql_sync_pipe for
+#     details.
+#
 # Author:
 #   Colan Schwartz - http://colans.net/
 # Licence:
@@ -77,10 +86,14 @@ $ECHO "About to drop all tables in the destination database..."
 $DRUSH $DESTINATION $CONFIRMATION sql-drop
 
 $ECHO "Sync the source site's database to the destination..."
-# Skipping cache tables until https://drupal.org/node/1446454 gets fixed.
-# This will make the dump bigger, but it's safer that wiping the cache on Prod first.
-#$DRUSH sql-sync --structure-tables-key=truncate --skip-tables-key=ignore --sanitize $CONFIRMATION $SOURCE $DESTINATION
-$DRUSH sql-sync --skip-tables-key=ignore --sanitize $CONFIRMATION $SOURCE $DESTINATION
+# Always download and use Drush SQL Sync Pipe instead of Drush's standard
+# sql-sync command.  It's more efficient, skips cache data by default, and
+# actually works on Pantheon sites.
+#
+# The "--dump" command would be useful for local caching, but it's currently
+# broken.  See https://drupal.org/node/2286697 for details.
+$DRUSH dl drush_sql_sync_pipe --destination=$HOME/.drush -y
+$DRUSH sql-sync-pipe --progress --sanitize $CONFIRMATION $SOURCE $DESTINATION
 
 $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
