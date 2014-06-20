@@ -82,9 +82,6 @@ $DRUSH $DESTINATION cc all
 $ECHO "Saving a backup of the existing destination database..."
 $DRUSH $DESTINATION sql-dump --create-db | $GZIP > ~/$DESTINATION.dump.mysql.gz
 
-$ECHO "About to drop all tables in the destination database..."
-$DRUSH $DESTINATION $CONFIRMATION sql-drop
-
 $ECHO "Sync the source site's database to the destination..."
 # Always download and use Drush SQL Sync Pipe instead of Drush's standard
 # sql-sync command.  It's more efficient, skips cache data by default, and
