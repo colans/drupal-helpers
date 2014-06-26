@@ -104,6 +104,10 @@ $ECHO "Revert all features to those in the code..."
 $DRUSH $DESTINATION cc all
 $DRUSH $DESTINATION features-revert-all -y
 
+$ECHO "Revert all views..."
+# Until released, this depends on a patch from https://www.drupal.org/node/1389720.
+$DRUSH $DESTINATION views-revert all
+
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
