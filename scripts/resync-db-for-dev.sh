@@ -63,10 +63,6 @@ MODULES_DISABLE="backup_migrate performance entitycache overlay toolbar $MODULES
 
 $ECHO "Start time: $($DATE +%T)"
 
-# Set targets.
-DB_DEST=$($DRUSH $DESTINATION status | $GREP "Database name" | $CUT -f2 -d:)
-DB_IDENTITY=$($ECHO $DESTINATION | $CUT -f2 -d@)
-
 $ECHO "Clear the existing DB's cache to save disk space..."
 $DRUSH $DESTINATION cc all
 
