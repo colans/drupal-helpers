@@ -1,13 +1,13 @@
 #!/bin/sh
 #############################################################################
 # Filename:
-#   drupal-resync
+#   resync-db-for-dev
 #
 # Purpose:
 #   Resynchronize a Drupal development site from Staging, Production, etc.
 #
 # Usage:
-#   drupal-resync <SOURCE_DRUSH_ALIAS> <DESTINATION_DRUSH_ALIAS> [<MODULES_DISABLE>]
+#   resync-db-for-dev <SOURCE_DRUSH_ALIAS> <DESTINATION_DRUSH_ALIAS> [<MODULES_DISABLE>]
 #
 # Parameters:
 #   <SOURCE_DRUSH_ALIAS>:      The site from which to copy the database. Required.
@@ -57,7 +57,7 @@ LOG_LOCAL0=128
 
 # Make sure that the parameters are specified.
 if [ -z "$2" ]; then
-  $ECHO "Usage: drupal-resync <source-drush-alias> <dest-drush-alias> [<modules-to-disable>]"
+  $ECHO "Usage: resync-db-for-dev <source-drush-alias> <dest-drush-alias> [<modules-to-disable>]"
   return 1
 fi
 
