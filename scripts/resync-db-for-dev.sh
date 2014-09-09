@@ -44,16 +44,8 @@ DATE=/bin/date
 SUDO=/usr/bin/sudo
 CHOWN=/bin/chown
 
-# Disable confirmation questions?  It's on by default.  Turning it off with "-y"
-# is dangerous.  You've been warned!
-#CONFIRMATION="-y"
-CONFIRMATION=""
-
 # Set the web user.
 USER_WEB=www-data
-
-# Set the logging channel.
-LOG_LOCAL0=128
 
 # Make sure that the parameters are specified.
 if [ -z "$2" ]; then
@@ -90,7 +82,7 @@ $ECHO "Sync the source site's database to the destination..."
 # The "--dump" command would be useful for local caching, but it's currently
 # broken.  See https://drupal.org/node/2286697 for details.
 $DRUSH dl drush_sql_sync_pipe --destination=$HOME/.drush -y
-$DRUSH sql-sync-pipe --progress --sanitize $CONFIRMATION $SOURCE $DESTINATION
+$DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
 $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
@@ -112,15 +104,11 @@ $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION en -y devel syslog update admin_menu
+$DRUSH $DESTINATION en -y devel update admin_menu
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
 $DRUSH $DESTINATION vset preprocess_js 0
-
-$ECHO "Set the destination's logging identity & facility..."
-$DRUSH $DESTINATION vset syslog_identity drupal-$DB_IDENTITY
-$DRUSH $DESTINATION vset syslog_facility $LOG_LOCAL0
 
 $ECHO "Set the destination's temporary & files directories..."
 $DRUSH $DESTINATION php-eval "variable_set('file_temporary_path', '/tmp')"
@@ -138,7 +126,7 @@ $DRUSH $DESTINATION cc all
 $ECHO "Updating the files directory..."
 # Transfer files ownership back to the current user for the rsync.
 $SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
-$DRUSH rsync $CONFIRMATION $SOURCE:%files $DESTINATION:%files
+$DRUSH rsync $SOURCE:%files $DESTINATION:%files
 # And then set it back to the Web user.
 $SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
 
