@@ -18,8 +18,7 @@
 #   * The web user below is correct.
 #   * Drush in installed.
 #   * Drush aliases with "files" locations are set up.
-#   * Devel is installed.
-#   * The logging channel ID is as below on the target machine.
+#   * Devel and Administration Menu are installed.
 #   * Rsync defaults are set appropriately in your Drush aliases.
 #   * The Drupal administrator role (with all permissions) is "administrator".
 #
