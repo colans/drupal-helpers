@@ -10,9 +10,6 @@
 # Prevent accessing unset variables
 set -u
 
-# Credential file
-CRED_FILE=/etc/mysql/debian.cnf
-
 # mysqldump opts
 OPTS="--single-transaction --skip-lock-tables"
 
@@ -32,11 +29,6 @@ owner_group=staff
 
 # Avoid taking all the CPU
 #renice +19 -p $$ > /dev/null
-
-# Get the password to connect to MySQL
-if [ -r "$CRED_FILE" ]; then
-  OPTS="--defaults-file=$CRED_FILE $OPTS"
-fi
 
 # Make sure that another instance of this script isn't running.
 pgrep $SCRIPTNAME
