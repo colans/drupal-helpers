@@ -133,9 +133,5 @@ $SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
 $ECHO "Run any periodic tasks that should be run..."
 $DRUSH $DESTINATION cron
 
-$ECHO "Creating an administrator user with your username..."
-$DRUSH $DESTINATION user-create $USER --mail="$USER@example.com" --password="letmein"
-$DRUSH $DESTINATION user-add-role administrator --name=$USER
-
 $ECHO "All done!"
 $ECHO "End time: $($DATE +%T)"
