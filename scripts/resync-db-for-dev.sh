@@ -54,7 +54,7 @@ fi
 # Make sure that the parameters are specified.
 if [ -z "$2" ]; then
   $ECHO "Usage: resync-db-for-dev <source-drush-alias> <dest-drush-alias> [<modules-to-disable>]"
-  return 1
+  exit 1
 fi
 
 # Set variables with defaults and arguments.
