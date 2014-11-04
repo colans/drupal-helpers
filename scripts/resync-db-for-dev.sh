@@ -126,7 +126,7 @@ $DRUSH $DESTINATION cc all
 $ECHO "Updating the files directory..."
 # Transfer files ownership back to the current user for the rsync.
 $SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
-$DRUSH rsync $SOURCE:%files $DESTINATION:%files
+$DRUSH rsync --progress $SOURCE:%files $DESTINATION:%files
 # And then set it back to the Web user.
 $SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
 
