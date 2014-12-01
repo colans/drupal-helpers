@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #############################################################################
 # Filename:
 #   resync-db-for-dev
@@ -56,6 +56,11 @@ if [ -z "$2" ]; then
   $ECHO "Usage: resync-db-for-dev <source-drush-alias> <dest-drush-alias> [<modules-to-disable>]"
   exit 1
 fi
+
+# Stop executing the script if any command fails.
+# See http://stackoverflow.com/a/4346420/442022 for details.
+set -e
+set -o pipefail
 
 # Set variables with defaults and arguments.
 SOURCE=$1
