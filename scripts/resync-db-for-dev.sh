@@ -69,7 +69,7 @@ DESTINATION=$2
 # Set some modules to disable.
 MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
-MODULES_DISABLE="backup_migrate performance entitycache overlay toolbar $MODULES_ACQUIA $MODULES_ADVAGG $3"
+MODULES_DISABLE="admin_menu_dropdown backup_migrate performance entitycache overlay toolbar $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
 $ECHO "Start time: $($DATE +%T)"
 
