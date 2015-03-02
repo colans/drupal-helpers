@@ -1,0 +1,100 @@
+#!/bin/bash
+#############################################################################
+# Filename:
+#   deploy-code-prod
+#
+# Purpose:
+#   Deploys a tagged version of the code onto the PROD site.
+#
+# Usage:
+#   deploy-code-prod GIT_RELEASE_TAG_ID
+#
+# Requirements:
+#   1) SSH must have access to an SSH key you've uploaded to the Git server
+#      so the code repository can be read.
+#   2) Passwordless SSH access (key-based) to the Varnish VMs is necessary to
+#      clear the Varnish caches.
+#   3) Configure the first section as per your project architecture.
+#############################################################################
+
+## Configuration section START ##############################################
+
+# Set log file.
+LOGFILE="/var/log/deployments/$(date +%FT%T)"
+
+# Set the Drush site alias for Production.
+SITE=@prod
+
+# Set the hostname for the Varnish server.
+VARNISH=varnish.prod.example.com
+
+# Set command paths.
+DRUSH=/usr/bin/drush
+GIT=/usr/bin/git
+ECHO=/bin/echo
+UMASK=umask
+
+## Configuration section END ################################################
+
+# Fill in some other variables.
+WEBDIR=$($DRUSH dd $SITE)
+TAG=$1
+
+# Ensure that the script was called appropriately.
+if [ "X$TAG" == "X" ]; then
+  echo "Usage: $0 <tagname>" 1>&2
+  exit 1
+fi
+
+# Stop executing the script if any command fails.
+# See http://stackoverflow.com/a/4346420/442022 for details.
+set -e
+set -o pipefail
+
+# Start redirecting output to log file.
+{
+
+$ECHO "Setting umask..."
+$UMASK 002
+
+$ECHO "Switching to the Web directory..."
+cd $WEBDIR
+
+$ECHO "Purging local modifications..."
+$GIT reset --hard HEAD
+
+$ECHO "Purging local untracked files..."
+$GIT clean -f -d
+
+$ECHO "Grabbing the latest code from the repository..."
+$GIT fetch --tags
+
+$ECHO "Switch to appropriate tag (${TAG})..."
+$GIT checkout tags/$TAG
+
+$ECHO "Rebuilding the registry in case file locations have changed..."
+$DRUSH pm-download registry_rebuild -y
+$DRUSH registry-rebuild
+
+$ECHO "Updating the database schema..."
+$DRUSH updatedb -y
+
+$ECHO "Reverting all features to those in code..."
+# The cache clearing is necessary for https://drupal.org/node/1822278.
+$DRUSH cache-clear all
+$DRUSH features-revert-all -y
+
+$ECHO "Reverting any views that aren't featurized..."
+$DRUSH views-revert --all
+
+$ECHO "Clearing all caches..."
+# Drupal.
+$DRUSH cache-clear all
+# Varnish.
+# This will block at a password prompt unless key access has been set up.
+ssh $VARNISH varnishadm "ban req.url \~ /"
+ssh $VARNISH varnishadm "ban req.url \~ /"
+
+$ECHO "All done!"
+
+} 2>&1 | tee ${LOGFILE}
