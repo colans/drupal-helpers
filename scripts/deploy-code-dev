@@ -1,0 +1,106 @@
+#!/bin/bash
+#############################################################################
+# Filename:
+#   deploy-code-dev
+#
+# Purpose:
+#   Deploys the latest code developer code onto the Dev site.
+#
+# Usage:
+#   deploy-code-dev (typically called as a cron job)
+#
+# Requirements:
+#   1) SSH must have access to an SSH key you've uploaded to the Git server
+#      so the code repository can be read.
+#   2) Passwordless SSH access (key-based) to the Varnish VM is necessary to
+#      clear the Varnish cache.
+#   3) Configure the first section as per your project architecture.
+#
+# IMPORTANT:
+#   IF YOU MAKE ANY CHANGES TO THIS FILE, MAKE SURE TO COMMIT THEM TO THE GIT
+#   REPOSITORY, OVER AT sites/all/scripts/deploy-code-dev.  This file would
+#   normally be a symlink to that from /etc/cron.XXX, but we can't guarantee
+#   the necessary permissions in the repository.  See
+#   http://askubuntu.com/questions/54857/can-symlinks-be-used-in-etc-cron-d
+#   for details.
+#############################################################################
+
+## Configuration section START ##############################################
+
+# Set e-mail address to send errors.
+MAILTO="someone@example.com"
+
+# Set log file.
+LOGFILE="/var/log/deployments/$(date +%FT%T)"
+
+# Set the development branch.
+BRANCH=dev
+
+# Set the Drush site alias for Dev.
+SITE=@dev
+
+# Set the hostname for the Varnish server.
+VARNISH=varnish.example.com
+
+# Set command paths.
+DRUSH=/usr/bin/drush
+GIT=/usr/bin/git
+ECHO=/bin/echo
+UMASK=umask
+
+## Configuration section END ################################################
+
+# Set variables with defaults and arguments.
+WEBDIR=$($DRUSH dd $SITE)
+
+# Stop executing the script if any command fails.
+# See http://stackoverflow.com/a/4346420/442022 for details.
+set -e
+set -o pipefail
+
+# Start redirecting output to log file.
+{
+
+$ECHO "Setting umask..."
+$UMASK 002
+
+$ECHO "Switching to the Web directory..."
+cd $WEBDIR
+
+$ECHO "Purging local modifications..."
+$GIT reset --hard HEAD
+
+$ECHO "Purging local untracked files..."
+$GIT clean -f -d
+
+$ECHO "Switching to the development branch..."
+$GIT checkout $BRANCH
+
+$ECHO "Grabbing latest code from the development branch..."
+$GIT pull -u origin $BRANCH
+
+$ECHO "Rebuilding the registry in case file locations have changed..."
+$DRUSH pm-download registry_rebuild -y
+$DRUSH registry-rebuild
+
+$ECHO "Updating the database schema..."
+$DRUSH updatedb -y
+
+$ECHO "Reverting all features to those in code..."
+# The cache clearing is necessary for https://drupal.org/node/1822278.
+$DRUSH cache-clear all
+$DRUSH features-revert-all -y
+
+$ECHO "Reverting any views that aren't featurized..."
+$DRUSH views-revert --all
+
+$ECHO "Clearing all caches..."
+# Drupal.
+$DRUSH cache-clear all
+# Varnish.
+# This will block at a password prompt unless key access has been set up.
+ssh $VARNISH varnishadm "ban req.url \~ /"
+
+$ECHO "All done!"
+
+} >& $LOGFILE
