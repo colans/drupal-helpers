@@ -41,15 +41,7 @@ ECHO=/bin/echo
 DATE=/bin/date
 SUDO=/usr/bin/sudo
 CHOWN=/bin/chown
-
-# Set the web user.
-if [ "`cat /etc/issue | head -1 | cut -d' ' -f1-4`" = "Red Hat Enterprise Linux" ]; then
-  # We're on Red Hat or some descendant.
-  USER_WEB=apache
-else
-  # We're on Debian or some descendant.
-  USER_WEB=www-data
-fi
+ID=/usr/bin/id
 
 # Make sure that the parameters are specified.
 if [ -z "$2" ]; then
@@ -61,6 +53,24 @@ fi
 # See http://stackoverflow.com/a/4346420/442022 for details.
 set -e
 set -o pipefail
+
+# Set the web user.
+if $ID -u "php-fpm" >/dev/null 2>&1
+then
+  # We've got a PHP-FPM user.
+  USER_WEB=php-fpm
+elif $ID -u "nginx" >/dev/null 2>&1
+then
+  # We've got Nginx, but no PHP-FPM user.
+  USER_WEB=nginx
+elif $ID -u "apache" >/dev/null 2>&1
+then
+  # We're using Apache on a non-Debian-based system.
+  USER_WEB=apache
+else
+  # We're on Debian/Ubuntu or some descendant.
+  USER_WEB=www-data
+fi
 
 # Set variables with defaults and arguments.
 SOURCE=$1
