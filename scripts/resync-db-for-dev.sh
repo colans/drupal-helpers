@@ -119,7 +119,7 @@ $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION en -y devel update admin_menu context_ui views_ui
+$DRUSH $DESTINATION en -y devel update admin_menu context_ui views_ui dblog
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
