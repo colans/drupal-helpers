@@ -30,7 +30,7 @@
 ECHO=/bin/echo
 CD=/usr/bin/cd
 AWK=/usr/bin/awk
-BASENAME=/usr/bin/basename
+BASENAME=$(which basename)
 
 ## Configuration section END ################################################
 
