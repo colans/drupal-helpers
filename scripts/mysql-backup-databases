@@ -43,8 +43,8 @@ set -u
 $MKDIR -p $BACKUP_DIR
 
 # Set the current timestamp and file targets.
-DATE=$(date "+%y%m%d%H%M")
-DST_BASE="$BACKUP_DIR/$1-$DATE.sql"
+DATE=$(date "+%FT%T")
+DST_BASE="$BACKUP_DIR/$1.$DATE.sql"
 DST_FILE="$DST_BASE.gz"
 LINK_TARGET="$BACKUP_DIR/$1-LATEST.sql.gz"
 
