@@ -1,13 +1,10 @@
 #!/bin/bash
 #############################################################################
-# Filename:
-#   deploy-code-prod
-#
 # Purpose:
 #   Deploys a tagged version of the code onto the PROD site.
 #
 # Usage:
-#   deploy-code-prod GIT_RELEASE_TAG_ID
+#   deploy-drupal-code-prod GIT_RELEASE_TAG_ID
 #
 # Requirements:
 #   1) SSH must have access to an SSH key you've uploaded to the Git server

@@ -1,13 +1,10 @@
 #!/bin/bash
 #############################################################################
-# Filename:
-#   deploy-code-qa
-#
 # Purpose:
 #   Deploys a tagged version of the code onto the QA/Staging site.
 #
 # Usage:
-#   deploy-code-qa GIT_RELEASE_TAG_ID
+#   deploy-drupal-code-qa GIT_RELEASE_TAG_ID
 #
 # Requirements:
 #   1) SSH must have access to an SSH key you've uploaded to the Git server

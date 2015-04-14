@@ -1,13 +1,10 @@
 #!/bin/bash
 #############################################################################
-# Filename:
-#   solr-deploy-on-glassfish
-#
 # Purpose:
 #   Deploys the Apache Solr application onto the GlassFish application server.
 #
 # Usage:
-#   solr-deploy-on-glassfish <glassfish-dir> <solr-dir> <password>
+#   deploy-solr-on-glassfish <glassfish-dir> <solr-dir> <password>
 #
 # Arguments:
 #   <glassfish-dir>
@@ -41,7 +38,7 @@ set -o pipefail
 
 # Make sure that the parameters are specified.
 if [[ -z $3 ]] || [[ ! -d $1 ]] || [[ ! -d $2 ]]; then
-  $ECHO "Usage: solr-deploy-on-glassfish <glassfish-dir> <solr-dir> <password>"
+  $ECHO "Usage: $0 <glassfish-dir> <solr-dir> <password>"
   exit 1
 fi
 

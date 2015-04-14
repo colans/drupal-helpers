@@ -1,13 +1,10 @@
 #!/bin/bash
 #############################################################################
-# Filename:
-#   deploy-code-dev
-#
 # Purpose:
 #   Deploys the latest code developer code onto the Dev site.
 #
 # Usage:
-#   deploy-code-dev (typically called as a cron job)
+#   deploy-drupal-code-dev (typically called as a cron job)
 #
 # Requirements:
 #   1) SSH must have access to an SSH key you've uploaded to the Git server
@@ -18,7 +15,7 @@
 #
 # IMPORTANT:
 #   IF YOU MAKE ANY CHANGES TO THIS FILE, MAKE SURE TO COMMIT THEM TO THE GIT
-#   REPOSITORY, OVER AT sites/all/scripts/deploy-code-dev.  This file would
+#   REPOSITORY, OVER AT sites/all/scripts.  This file would
 #   normally be a symlink to that from /etc/cron.XXX, but we can't guarantee
 #   the necessary permissions in the repository.  See
 #   http://askubuntu.com/questions/54857/can-symlinks-be-used-in-etc-cron-d
