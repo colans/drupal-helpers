@@ -46,11 +46,11 @@ $MKDIR -p $BACKUP_DIR
 DATE=$(date "+%FT%T")
 DST_BASE="$BACKUP_DIR/$1.$DATE.sql"
 DST_FILE="$DST_BASE.gz"
-LINK_TARGET="$BACKUP_DIR/$1-LATEST.sql.gz"
+LINK_TARGET="$BACKUP_DIR/$1.LATEST.sql.gz"
 
 # Run the Drush command to dump all of the tables.
 # Cache tables are to maintain their structure, but will not contain any data.
-$DRUSH $1 sql-dump --gzip --result-file=$DST_BASE --structure-tables-list=cache*
+$DRUSH $1 sql-dump --quiet --gzip --result-file=$DST_BASE --structure-tables-list=cache*
 
 # Make the files readable by the user and group, no other permissions.
 $CHMOD 440 $DST_FILE
