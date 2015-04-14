@@ -1,8 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 #############################################################################
-# Filename: mysql-backup-databases
-# Purpose: To dump all of the mysql databases, compress them, and keep
-#          a few dumps for some time.
+# Purpose:
+#   Back up a Drupal site's database, and delete old backups.
+#
+# Parameters:
+#   <drush-alias>
+#     The Drush alias of the Drupal site to be backed up.
+#
+# Prerequisites:
+#   * Drush 6+
+#   * Globally available Drush aliases
+#
 # Author: Colan Schwartz
 # Licence: GPLv3
 #############################################################################
@@ -11,51 +19,45 @@
 BACKUP_DIR=/var/local/backups/mysql
 GROUP_OWNER=adm
 KEEP_DAYS=60
-DB_SKIP_LIST="test|temp"
 
 # Command paths.
 DRUSH=/usr/local/bin/drush
-PGREP=/usr/bin/pgrep
 CHMOD=/bin/chmod
 CHGRP=/bin/chgrp
-GZIP=/bin/gzip
 LN=/bin/ln
 FIND=/usr/bin/find
-LOGGER=/usr/bin/logger
+MKDIR=/bin/mkdir
+ECHO=\echo
+
+# Make sure that the parameters are specified.
+SCRIPTNAME=$(basename $0)
+if [[ -z $1 ]]; then
+  $ECHO "Usage: $SCRIPTNAME <drush-alias>"
+  exit 1
+fi
 
 # Prevent accessing unset variables
 set -u
 
-# mysqldump opts
-OPTS="--single-transaction --skip-lock-tables"
-CACHETABLES="cache cache_admin_menu cache_apachesolr cache_block cache_bootstrap cache_content cache_ds_panels cache_field cache_filter cache_form cache_htmlpurifier cache_location cache_luceneapi cache_menu cache_metatag cache_page cache_path cache_rules cache_token cache_update cache_variable cache_views cache_views_data ctools_css_cache ctools_object_cache views_data_export_object_cache views_object_cache"
+# Create the backup directory if it doesn't exist yet.
+$MKDIR -p $BACKUP_DIR
 
-# Make sure that another instance of this script isn't running.
-SCRIPTNAME=$(basename $0)
-$PGREP $SCRIPTNAME
-RET=$?
-if [ "$RET" -eq 0 ]; then
-  $LOGGER "$SCRIPTNAME: Another instance of the process $SCRIPTNAME is running; exitting to avoid multiples instances."
-  exit 1
-fi
+# Set the current timestamp and file targets.
+DATE=$(date "+%y%m%d%H%M")
+DST_BASE="$BACKUP_DIR/$1-$DATE.sql"
+DST_FILE="$DST_BASE.gz"
+LINK_TARGET="$BACKUP_DIR/$1-LATEST.sql.gz"
 
-# Get the database names to backup.
-DATABASES=$(\ls -F /var/lib/mysql | grep '\/$' | sed 's/\///g' | grep -vwE $DB_SKIP_LIST)
+# Run the Drush command to dump all of the tables.
+# Cache tables are to maintain their structure, but will not contain any data.
+$DRUSH $1 sql-dump --gzip --result-file=$DST_BASE --structure-tables-list=cache*
 
-# Dump each database and compress it.
-for DATABASE in $DATABASES
-do
-  IGNORETABLES=$(for TABLE in $(echo $CACHETABLES); do echo -n " --ignore-table=$DATABASE.$TABLE"; done; echo -n " ")
-  DATE=$(date "+%y%m%d%H%M")
-  DST_FILE="$BACKUP_DIR/$DATABASE-$DATE.sql.gz"
-  LINK_TARGET="$BACKUP_DIR/$DATABASE-LATEST.sql.gz"
-# Should probably truncate these tables afterwards instead.
-#  mysqldump $OPTS $IGNORETABLES $DATABASE | $GZIP > $DST_FILE
-  mysqldump $OPTS $DATABASE | $GZIP > $DST_FILE
-  $CHMOD 440 $DST_FILE
-  $CHGRP $GROUP_OWNER $DST_FILE
-  $LN -sf $DST_FILE $LINK_TARGET
-done
+# Make the files readable by the user and group, no other permissions.
+$CHMOD 440 $DST_FILE
+$CHGRP $GROUP_OWNER $DST_FILE
 
-# Delete old backups
+# Set a pointer to the latest backup file.
+$LN -sf $DST_FILE $LINK_TARGET
+
+# Delete old backups.
 $FIND $BACKUP_DIR -maxdepth 1 -type f -mtime +$KEEP_DAYS -delete
