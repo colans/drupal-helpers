@@ -7,59 +7,55 @@
 # Licence: GPLv3
 #############################################################################
 
+# Configuration options.
+BACKUP_DIR=/var/local/backups/mysql
+GROUP_OWNER=adm
+KEEP_DAYS=60
+DB_SKIP_LIST="test|temp"
+
+# Command paths.
+DRUSH=/usr/local/bin/drush
+PGREP=/usr/bin/pgrep
+CHMOD=/bin/chmod
+CHGRP=/bin/chgrp
+GZIP=/bin/gzip
+LN=/bin/ln
+FIND=/usr/bin/find
+LOGGER=/usr/bin/logger
+
 # Prevent accessing unset variables
 set -u
 
 # mysqldump opts
 OPTS="--single-transaction --skip-lock-tables"
-
 CACHETABLES="cache cache_admin_menu cache_apachesolr cache_block cache_bootstrap cache_content cache_ds_panels cache_field cache_filter cache_form cache_htmlpurifier cache_location cache_luceneapi cache_menu cache_metatag cache_page cache_path cache_rules cache_token cache_update cache_variable cache_views cache_views_data ctools_css_cache ctools_object_cache views_data_export_object_cache views_object_cache"
 
-SCRIPTNAME=$(basename $0)
-
-# Set the backup directory.
-BACKUPDIR=/var/local/backups/mysql
-if [ ! -d "$BACKUPDIR" ]; then
-  logger "$SCRIPTNAME: Destination directory doesn't exist."
-  mkdir -p $BACKUPDIR
-fi
-
-# Set the group owner of the dumps
-owner_group=staff
-
-# Avoid taking all the CPU
-#renice +19 -p $$ > /dev/null
-
 # Make sure that another instance of this script isn't running.
-pgrep $SCRIPTNAME
+SCRIPTNAME=$(basename $0)
+$PGREP $SCRIPTNAME
 RET=$?
 if [ "$RET" -eq 0 ]; then
-  logger "$SCRIPTNAME: Another instance of the process $SCRIPTNAME is running, exitting
-to avoid multiples instances"
+  $LOGGER "$SCRIPTNAME: Another instance of the process $SCRIPTNAME is running; exitting to avoid multiples instances."
   exit 1
 fi
 
-# Some DB don't need to be backup
-SKIP_BACKUP_LIST="test|temp"
-
 # Get the database names to backup.
-DATABASES=`\ls -F /var/lib/mysql | grep '\/$' | sed 's/\///g' | grep -vwE $SKIP_BACKUP_LIST`
+DATABASES=$(\ls -F /var/lib/mysql | grep '\/$' | sed 's/\///g' | grep -vwE $DB_SKIP_LIST)
 
 # Dump each database and compress it.
 for DATABASE in $DATABASES
 do
   IGNORETABLES=$(for TABLE in $(echo $CACHETABLES); do echo -n " --ignore-table=$DATABASE.$TABLE"; done; echo -n " ")
   DATE=$(date "+%y%m%d%H%M")
-  DST_FILE="$BACKUPDIR/$DATABASE-$DATE.sql.gz"
-  LINK_TARGET="$BACKUPDIR/$DATABASE-LATEST.sql.gz"
+  DST_FILE="$BACKUP_DIR/$DATABASE-$DATE.sql.gz"
+  LINK_TARGET="$BACKUP_DIR/$DATABASE-LATEST.sql.gz"
 # Should probably truncate these tables afterwards instead.
-#  mysqldump $OPTS $IGNORETABLES $DATABASE | gzip > $DST_FILE
-  mysqldump $OPTS $DATABASE | gzip > $DST_FILE
-  chmod 440 $DST_FILE
-  chgrp $owner_group $DST_FILE
-  ln -sf $DST_FILE $LINK_TARGET
+#  mysqldump $OPTS $IGNORETABLES $DATABASE | $GZIP > $DST_FILE
+  mysqldump $OPTS $DATABASE | $GZIP > $DST_FILE
+  $CHMOD 440 $DST_FILE
+  $CHGRP $GROUP_OWNER $DST_FILE
+  $LN -sf $DST_FILE $LINK_TARGET
 done
 
 # Delete old backups
-KEEP_DAYS=60
-find $BACKUPDIR -maxdepth 1 -type f -mtime +$KEEP_DAYS -delete
+$FIND $BACKUP_DIR -maxdepth 1 -type f -mtime +$KEEP_DAYS -delete
