@@ -138,7 +138,8 @@ $DRUSH $DESTINATION cc all
 $ECHO "Updating the files directory..."
 # Transfer files ownership back to the current user for the rsync.
 $SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
-$DRUSH rsync $SOURCE:%files $DESTINATION:%files
+# Perform the transfer of files excluding private and cache files.
+$DRUSH rsync --exclude-paths=%files/private:%files/css:%files/js:%files/styles:%files/ctools $SOURCE:%files $DESTINATION:%files
 # And then set it back to the Web user.
 $SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
 
