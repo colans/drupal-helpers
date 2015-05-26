@@ -29,6 +29,7 @@ MAILTO="someone@example.com"
 
 # Set log file.
 LOGFILE="/var/log/deployments/$(date +%FT%T)"
+LATEST="/var/log/deployments/latest"
 
 # Set the development branch.
 BRANCH=dev
@@ -44,6 +45,7 @@ DRUSH=/usr/bin/drush
 GIT=/usr/bin/git
 ECHO=/bin/echo
 UMASK=umask
+LN=/bin/ln
 
 ## Configuration section END ################################################
 
@@ -101,3 +103,6 @@ ssh $VARNISH varnishadm "ban req.url \~ /"
 $ECHO "All done!"
 
 } >& $LOGFILE
+
+# Set a pointer to the latest log file.
+$LN -sf $LOGFILE $LATEST
