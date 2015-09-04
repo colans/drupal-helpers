@@ -1,4 +1,4 @@
-drupal-helpers
+Drupal Helpers
 ==============
 
 The tools in this project are primarily used for deployment and other devops
