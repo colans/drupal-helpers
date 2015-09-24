@@ -12,11 +12,9 @@
 #   <MODULES_DISABLE>:         A list of space-separated modules to disable. Optional.
 # Assumptions:
 #   * The command paths below are correct.
-#   * Drush in installed.
+#   * Drush in installed locally and remotely (if the source is remote).
 #   * Drush aliases with "files" locations are set up.
 #   * Devel and Administration Menu are installed.
-#   * Rsync defaults are set appropriately in your Drush aliases.
-#   * The Drupal administrator role (with all permissions) is "administrator".
 #
 # Enhancements:
 #   * If you'd like to see database synchronization progress, install the Pipe
