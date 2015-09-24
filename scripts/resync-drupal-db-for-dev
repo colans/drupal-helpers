@@ -96,6 +96,11 @@ $ECHO "Sync the source site's database to the destination..."
 $DRUSH dl drush_sql_sync_pipe --destination=$HOME/.drush -y
 $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
+$ECHO "Set the destination's temporary & files directories..."
+# The registry rebuild sometimes requires that these be set first.
+$DRUSH $DESTINATION php-eval "variable_set('file_temporary_path', '/tmp')"
+$DRUSH $DESTINATION php-eval "variable_set('file_public_path', 'sites/default/files')"
+
 $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
 $DRUSH $DESTINATION registry-rebuild
@@ -121,10 +126,6 @@ $DRUSH $DESTINATION en -y devel update admin_menu context_ui views_ui dblog
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
 $DRUSH $DESTINATION vset preprocess_js 0
-
-$ECHO "Set the destination's temporary & files directories..."
-$DRUSH $DESTINATION php-eval "variable_set('file_temporary_path', '/tmp')"
-$DRUSH $DESTINATION php-eval "variable_set('file_public_path', 'sites/default/files')"
 
 $ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
