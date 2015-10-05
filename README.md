@@ -4,6 +4,8 @@ Drupal Helpers
 The tools in this project are primarily used for deployment and other devops
 tasks essential for managing Drupal sites.
 
+For a detailed article on them, please see [Drupal Helpers: Tools for devops and deployment](http://colans.net/blog/drupal-helpers-tools-devops-and-deployment).
+
 Authoritative project (for creating issues, merge/pull requests and the wiki):
 * GitLab: https://gitlab.com/colan/drupal-helpers
 
