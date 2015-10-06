@@ -112,8 +112,9 @@ $DRUSH $DESTINATION cc all
 $DRUSH $DESTINATION features-revert-all -y
 
 $ECHO "Revert all views..."
-# Until released, this depends on a patch from https://www.drupal.org/node/1389720.
-$DRUSH $DESTINATION views-revert --all
+# As "--all" is a fairly new option, remove strictness to avoid stopping the
+# script for Views < 7.x-3.11. In this case, the user will be prompted.
+$DRUSH --strict=0 $DESTINATION views-revert --all
 
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
