@@ -135,6 +135,9 @@ $DRUSH $DESTINATION php-eval "variable_set('cron_safe_threshold', '0')"
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
 
+$ECHO "Run any periodic tasks that should be run..."
+$DRUSH $DESTINATION cron
+
 $ECHO "Updating the files directory..."
 # Transfer files ownership to the current user for the rsync.
 $SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
@@ -142,9 +145,6 @@ $SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
 $DRUSH rsync --mode=rlptDz --exclude-paths=private:css:js:advagg_js:advagg_css:styles:ctools:xmlsitemap $SOURCE:%files $DESTINATION:%files
 # And then set it back to the Web user.
 $SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
-
-$ECHO "Run any periodic tasks that should be run..."
-$DRUSH $DESTINATION cron
 
 $ECHO "All done!"
 $ECHO "End time: $($DATE +%T)"
