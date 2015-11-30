@@ -122,6 +122,11 @@ $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 $ECHO "Enabling extra modules for development..."
 $DRUSH $DESTINATION en -y devel update admin_menu context_ui views_ui dblog
 
+$ECHO "Prevent mail from being sent..."
+$DRUSH $DESTINATION dl maillog -y
+$DRUSH $DESTINATION en maillog -y
+$DRUSH $DESTINATION vset maillog_send 0
+
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
 $DRUSH $DESTINATION vset preprocess_js 0
