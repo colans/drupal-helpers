@@ -12,9 +12,20 @@
 #   <MODULES_DISABLE>:         A list of space-separated modules to disable. Optional.
 # Assumptions:
 #   * The command paths below are correct.
-#   * Drush in installed locally and remotely (if the source is remote).
-#   * Drush aliases with "files" locations are set up.
-#   * Devel and Administration Menu are installed.
+#   * Drush is installed locally and remotely (if the source is remote).
+#   * Views, Devel and Administration Menu are installed.
+#   * Destination Drush aliases have public, private & temporary file locations set up.
+#     e.g.:
+#        $aliases['lo'] = array(
+#          ...
+#          'path-aliases' => array(
+#            '%files' => 'sites/default/files',
+#            '%private' => 'sites/default/files/private',
+#            '%temp' => '/tmp',
+#            ...
+#          ),
+#          ...
+#        );
 #
 # Enhancements:
 #   * If you'd like to see database synchronization progress, install the Pipe
@@ -37,6 +48,7 @@ DATE=/bin/date
 SUDO=/usr/bin/sudo
 CHOWN=/bin/chown
 ID=/usr/bin/id
+MKDIR=/bin/mkdir
 
 # Make sure that the parameters are specified.
 if [ -z "$2" ]; then
@@ -76,6 +88,11 @@ MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
 MODULES_DISABLE="admin_menu_dropdown backup_migrate performance entitycache navbar overlay toolbar securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
+# Set file locations from Drush configuration.
+PUBLIC=$($DRUSH site-alias $DESTINATION | $GREP '%files' | $CUT -f4 -d"'")
+PRIVATE=$($DRUSH site-alias $DESTINATION | $GREP '%private' | $CUT -f4 -d"'")
+TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
+
 $ECHO "Start time: $($DATE +%T)"
 
 $ECHO "Clear the existing DB's cache to save disk space..."
@@ -94,10 +111,12 @@ $ECHO "Sync the source site's database to the destination..."
 $DRUSH dl drush_sql_sync_pipe --destination=$HOME/.drush -y
 $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
-$ECHO "Set the destination's temporary & files directories..."
 # The registry rebuild sometimes requires that these be set first.
-$DRUSH $DESTINATION php-eval "variable_set('file_temporary_path', '/tmp')"
-$DRUSH $DESTINATION php-eval "variable_set('file_public_path', 'sites/default/files')"
+$ECHO "Set the destination's file locations..."
+$MKDIR -p $PUBLIC $PRIVATE $TEMP
+$DRUSH $DESTINATION vset file_public_path $PUBLIC
+$DRUSH $DESTINATION vset file_private_path $PRIVATE
+$DRUSH $DESTINATION vset file_temporary_path $TEMP
 
 $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
@@ -135,7 +154,7 @@ $ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
 
 $ECHO "Disable user-initiated cron runs..."
-$DRUSH $DESTINATION php-eval "variable_set('cron_safe_threshold', '0')"
+$DRUSH $DESTINATION vset cron_safe_threshold 0
 
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cc all
@@ -143,7 +162,7 @@ $DRUSH $DESTINATION cc all
 $ECHO "Run any periodic tasks that should be run..."
 $DRUSH $DESTINATION cron
 
-$ECHO "Updating the files directory..."
+$ECHO "Updating the public files directory..."
 # Transfer files ownership to the current user for the rsync.
 $SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
 # Perform the transfer of files excluding private and cache files.
