@@ -12,7 +12,9 @@ Authoritative project (for creating issues, merge/pull requests and the wiki):
 Mirror (issues, merge/pull requests and the wiki are disabled):
 * GitHub: https://github.com/colans/drupal-helpers
 
-At the time of this writing, the following items are included:
+Please be aware that each branch represents compatibility with a Drupal core version.  So the *master* branch contains code for the latest stable Drupal release.  For example, at the time of this writing, *master* works with Drupal 8.0.x while *drupal-7.x* works with Drupal 7.
+
+The following items are included:
 
 File | Description
 --- | ---
@@ -23,5 +25,5 @@ scripts/deploy-drupal-code-dev | Deploys the latest developer code onto the deve
 scripts/deploy-drupal-code-prod | Deploys a Git-tagged version of the code onto the production site.
 scripts/deploy-drupal-code-qa | Deploys a Git-tagged version of the code onto the staging/QA site.
 scripts/deploy-solr-on-glassfish.sh | Deploys the Solr search engine onto the GlassFish application server.
-drupal-remake.sh | Rebuilds a Drupal site using the site's most recent Drush makefile.
+scripts/drupal-remake.sh | Rebuilds a Drupal site using the site's most recent Drush makefile.
 scripts/resync-drupal-db-for-dev.sh | Refreshes any development site from a staging/QA or production site, setting everything for development and disabling things not useful for development.
