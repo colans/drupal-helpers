@@ -86,7 +86,7 @@ DESTINATION=$2
 # Set some modules to disable.
 MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
-MODULES_DISABLE="admin_menu_dropdown backup_migrate performance entitycache navbar overlay toolbar securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
+MODULES_DISABLE="admin_menu_dropdown backup_migrate performance toolbar securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
 # Set file locations from Drush configuration.
 PUBLIC=$($DRUSH site-alias $DESTINATION | $GREP '%files' | $CUT -f4 -d"'")
