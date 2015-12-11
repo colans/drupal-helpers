@@ -96,7 +96,7 @@ TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
 $ECHO "Start time: $($DATE +%T)"
 
 $ECHO "Clear the existing DB's cache to save disk space..."
-$DRUSH $DESTINATION cc all
+$DRUSH $DESTINATION cache-rebuild
 
 $ECHO "Saving a backup of the existing destination database..."
 $DRUSH $DESTINATION sql-dump --create-db | $GZIP > ~/$DESTINATION.dump.mysql.gz
@@ -127,7 +127,7 @@ $DRUSH $DESTINATION updatedb -y
 
 $ECHO "Revert all features to those in the code..."
 # We need the cache-clear for https://drupal.org/node/1822278.
-$DRUSH $DESTINATION cc all
+$DRUSH $DESTINATION cache-rebuild
 $DRUSH $DESTINATION features-revert-all -y
 
 $ECHO "Revert all views..."
@@ -157,7 +157,7 @@ $ECHO "Disable user-initiated cron runs..."
 $DRUSH $DESTINATION vset cron_safe_threshold 0
 
 $ECHO "Clearing the destination site's cache..."
-$DRUSH $DESTINATION cc all
+$DRUSH $DESTINATION cache-rebuild
 
 $ECHO "Run any periodic tasks that should be run..."
 $DRUSH $DESTINATION cron
