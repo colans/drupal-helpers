@@ -13,14 +13,12 @@
 # Assumptions:
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
-#   * Views, Devel and Administration Menu are installed.
-#   * Destination Drush aliases have public, private & temporary file locations set up.
+#   * Views, Devel and Admin Toolbar are installed.
+#   * Destination Drush aliases have their temporary file locations set up.
 #     e.g.:
 #        $aliases['lo'] = array(
 #          ...
 #          'path-aliases' => array(
-#            '%files' => 'sites/default/files',
-#            '%private' => 'sites/default/files/private',
 #            '%temp' => '/tmp',
 #            ...
 #          ),
@@ -86,7 +84,7 @@ DESTINATION=$2
 # Set some modules to disable.
 MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
-MODULES_DISABLE="admin_menu_dropdown backup_migrate performance toolbar securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
+MODULES_DISABLE="admin_menu_dropdown backup_migrate performance securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
 # Set the temporary file location from the Drush configuration.
 TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
@@ -120,10 +118,10 @@ $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
 
 $ECHO "Disabling modules not meant for development..."
-$DRUSH $DESTINATION dis -y $MODULES_DISABLE
+$DRUSH $DESTINATION pm-uninstall -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION en -y devel update admin_menu views_ui dblog
+$DRUSH $DESTINATION pm-enable -y devel update admin_toolbar views_ui dblog
 
 $ECHO "Prevent mail from being sent..."
 $DRUSH $DESTINATION dl maillog -y
