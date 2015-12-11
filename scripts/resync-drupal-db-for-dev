@@ -112,14 +112,9 @@ $DRUSH dl drush_sql_sync_pipe-7.x-2.x --destination=$HOME/.drush -y
 # broken.  See https://drupal.org/node/2286697 for details.
 $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
-# The registry rebuild sometimes requires that these be set first.
 $ECHO "Set the destination's temporary file location..."
 $MKDIR -p $TEMP
 $DRUSH $DESTINATION config-set system.file path.temporary $TEMP -y
-
-$ECHO "Rebuild the registry in case file locations have changed..."
-$DRUSH dl -y registry_rebuild
-$DRUSH $DESTINATION registry-rebuild
 
 $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
