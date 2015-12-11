@@ -39,7 +39,7 @@
 #############################################################################
 
 # Set command paths.
-DRUSH=/usr/bin/drush
+DRUSH=/usr/local/bin/drush
 GZIP=/bin/gzip
 CUT=/usr/bin/cut
 GREP=/bin/grep
