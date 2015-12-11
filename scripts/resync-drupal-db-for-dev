@@ -128,8 +128,8 @@ $DRUSH $DESTINATION pm-enable maillog -y
 $DRUSH $DESTINATION config-set maillog.settings send 0 -y
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
-$DRUSH $DESTINATION vset preprocess_css 0
-$DRUSH $DESTINATION vset preprocess_js 0
+$DRUSH $DESTINATION config-set system.performance css.preprocess 0 -y
+$DRUSH $DESTINATION config-set system.performance js.preprocess 0 -y
 
 $ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
