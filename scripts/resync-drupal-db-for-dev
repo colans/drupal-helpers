@@ -88,9 +88,7 @@ MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
 MODULES_DISABLE="admin_menu_dropdown backup_migrate performance toolbar securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
-# Set file locations from Drush configuration.
-PUBLIC=$($DRUSH site-alias $DESTINATION | $GREP '%files' | $CUT -f4 -d"'")
-PRIVATE=$($DRUSH site-alias $DESTINATION | $GREP '%private' | $CUT -f4 -d"'")
+# Set the temporary file location from the Drush configuration.
 TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
 
 $ECHO "Start time: $($DATE +%T)"
@@ -115,11 +113,9 @@ $DRUSH dl drush_sql_sync_pipe-7.x-2.x --destination=$HOME/.drush -y
 $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
 # The registry rebuild sometimes requires that these be set first.
-$ECHO "Set the destination's file locations..."
-$MKDIR -p $PUBLIC $PRIVATE $TEMP
-$DRUSH $DESTINATION vset file_public_path $PUBLIC
-$DRUSH $DESTINATION vset file_private_path $PRIVATE
-$DRUSH $DESTINATION vset file_temporary_path $TEMP
+$ECHO "Set the destination's temporary file location..."
+$MKDIR -p $TEMP
+$DRUSH $DESTINATION config-set system.file path.temporary $TEMP -y
 
 $ECHO "Rebuild the registry in case file locations have changed..."
 $DRUSH dl -y registry_rebuild
