@@ -132,7 +132,7 @@ $DRUSH $DESTINATION config-set system.performance css.preprocess 0 -y
 $DRUSH $DESTINATION config-set system.performance js.preprocess 0 -y
 
 $ECHO "Enable error reporting on the destination site..."
-$DRUSH $DESTINATION php-eval "variable_set('error_level', ERROR_REPORTING_DISPLAY_ALL)"
+$DRUSH $DESTINATION config-set system.logging error_level verbose -y
 
 $ECHO "Disable user-initiated cron runs..."
 $DRUSH $DESTINATION vset cron_safe_threshold 0
