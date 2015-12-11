@@ -124,9 +124,8 @@ $ECHO "Enabling extra modules for development..."
 $DRUSH $DESTINATION pm-enable -y devel update admin_toolbar views_ui dblog
 
 $ECHO "Prevent mail from being sent..."
-$DRUSH $DESTINATION dl maillog -y
-$DRUSH $DESTINATION en maillog -y
-$DRUSH $DESTINATION vset maillog_send 0
+$DRUSH $DESTINATION pm-enable maillog -y
+$DRUSH $DESTINATION config-set maillog.settings send 0 -y
 
 $ECHO "Disabling the destination's CSS & JavaScript caching..."
 $DRUSH $DESTINATION vset preprocess_css 0
