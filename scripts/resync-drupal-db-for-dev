@@ -119,16 +119,6 @@ $DRUSH $DESTINATION config-set system.file path.temporary $TEMP -y
 $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
 
-$ECHO "Revert all features to those in the code..."
-# We need the cache-clear for https://drupal.org/node/1822278.
-$DRUSH $DESTINATION cache-rebuild
-$DRUSH $DESTINATION features-revert-all -y
-
-$ECHO "Revert all views..."
-# As "--all" is a fairly new option, remove strictness to avoid stopping the
-# script for Views < 7.x-3.11. In this case, the user will be prompted.
-$DRUSH --strict=0 $DESTINATION views-revert --all
-
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION dis -y $MODULES_DISABLE
 
