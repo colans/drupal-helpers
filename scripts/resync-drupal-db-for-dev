@@ -14,6 +14,7 @@
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
 #   * Views, Devel and Admin Toolbar are installed.
+#   * Sudo access is available to properly handle files directory permissions.
 #   * Destination Drush aliases have their temporary file locations set up.
 #     e.g.:
 #        $aliases['lo'] = array(
@@ -138,12 +139,13 @@ $ECHO "Run any periodic tasks that should be run..."
 $DRUSH $DESTINATION cron
 
 $ECHO "Updating the public files directory..."
+FILES=$($DRUSH dd $DESTINATION:%files)
 # Transfer files ownership to the current user for the rsync.
-$SUDO $CHOWN -R $USER $($DRUSH dd $DESTINATION:%files)
+$SUDO $CHOWN -R $USER $FILES
 # Perform the transfer of files excluding private and cache files.
-$DRUSH rsync --mode=rlptDz --exclude-paths=private:css:js:advagg_js:advagg_css:styles:ctools:xmlsitemap $SOURCE:%files $DESTINATION:%files
+$DRUSH -r $FILES rsync --exclude-paths=private:css:js:advagg_js:advagg_css:styles:ctools:xmlsitemap $SOURCE:%files $FILES
 # And then set it back to the Web user.
-$SUDO $CHOWN -R $USER_WEB $($DRUSH dd $DESTINATION:%files)
+$SUDO $CHOWN -R $USER_WEB $FILES
 
 $ECHO "All done!"
 $ECHO "End time: $($DATE +%T)"
