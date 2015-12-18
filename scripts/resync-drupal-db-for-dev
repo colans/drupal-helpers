@@ -84,7 +84,7 @@ DESTINATION=$2
 # Set some modules to disable.
 MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
-MODULES_DISABLE="admin_menu_dropdown backup_migrate performance securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
+MODULES_DISABLE="automated_cron backup_migrate performance securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
 # Set the temporary file location from the Drush configuration.
 TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
@@ -130,9 +130,6 @@ $DRUSH $DESTINATION config-set system.performance js.preprocess 0 -y
 
 $ECHO "Enable error reporting on the destination site..."
 $DRUSH $DESTINATION config-set system.logging error_level verbose -y
-
-$ECHO "Disable user-initiated cron runs..."
-$DRUSH $DESTINATION vset cron_safe_threshold 0
 
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cache-rebuild
