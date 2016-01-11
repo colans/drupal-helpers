@@ -13,18 +13,14 @@
 # Assumptions:
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
-#   * Views, Devel and Admin Toolbar are installed.
+#   * Views, Devel, Maillog / Mail Developer and Admin Toolbar are installed.
 #   * Sudo access is available to properly handle files directory permissions.
-#   * Destination Drush aliases have their temporary file locations set up.
-#     e.g.:
-#        $aliases['lo'] = array(
-#          ...
-#          'path-aliases' => array(
-#            '%temp' => '/tmp',
-#            ...
-#          ),
-#          ...
-#        );
+#   * The following settings should be in your settings.local.php:
+#       $config['system.logging']['error_level'] = 'verbose';
+#       $config['system.performance']['css']['preprocess'] = FALSE;
+#       $config['system.performance']['js']['preprocess'] = FALSE;
+#       $config['system.file']['path']['temporary'] = '/tmp';
+#       $config['maillog.settings']['send'] = FALSE;
 #
 # Enhancements:
 #   * If you'd like to see database synchronization progress, install the Pipe
@@ -87,9 +83,6 @@ MODULES_ACQUIA="acquia_spi acquia_agent"
 MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_css_cdn advagg_js_cdn advagg_bundler"
 MODULES_DISABLE="automated_cron backup_migrate performance securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
-# Set the temporary file location from the Drush configuration.
-TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
-
 $ECHO "Start time: $($DATE +%T)"
 
 $ECHO "Clear the existing DB's cache to save disk space..."
@@ -108,10 +101,6 @@ $DRUSH cache-clear drush
 # broken.  See https://drupal.org/node/2286697 for details.
 $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
-$ECHO "Set the destination's temporary file location..."
-$MKDIR -p $TEMP
-$DRUSH $DESTINATION config-set system.file path.temporary $TEMP -y
-
 $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
 
@@ -119,18 +108,7 @@ $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION pm-uninstall -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION pm-enable -y devel update admin_toolbar views_ui dblog
-
-$ECHO "Prevent mail from being sent..."
-$DRUSH $DESTINATION pm-enable maillog -y
-$DRUSH $DESTINATION config-set maillog.settings send 0 -y
-
-$ECHO "Disabling the destination's CSS & JavaScript caching..."
-$DRUSH $DESTINATION config-set system.performance css.preprocess 0 -y
-$DRUSH $DESTINATION config-set system.performance js.preprocess 0 -y
-
-$ECHO "Enable error reporting on the destination site..."
-$DRUSH $DESTINATION config-set system.logging error_level verbose -y
+$DRUSH $DESTINATION pm-enable -y devel update admin_toolbar views_ui dblog maillog
 
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cache-rebuild
