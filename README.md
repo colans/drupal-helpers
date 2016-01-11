@@ -24,6 +24,6 @@ File | Description
 [deploy-drupal-code-dev](scripts/deploy-drupal-code-dev) | Deploys the latest developer code onto the development/integration site.
 [deploy-drupal-code-prod](scripts/deploy-drupal-code-prod) | Deploys a Git-tagged version of the code onto the production site.
 [deploy-drupal-code-qa](scripts/deploy-drupal-code-qa) | Deploys a Git-tagged version of the code onto the staging/QA site.
-[deploy-solr-on-glassfish.sh](scripts/deploy-solr-on-glassfish.sh) | Deploys the Solr search engine onto the GlassFish application server.
-[drupal-remake.sh](scripts/drupal-remake.sh) | Rebuilds a Drupal site using the site's most recent Drush makefile.
-[resync-drupal-db-for-dev.sh](scripts/resync-drupal-db-for-dev.sh) | Refreshes any development site from a staging/QA or production site, setting everything for development and disabling things not useful for development.
+[deploy-solr-on-glassfish](scripts/deploy-solr-on-glassfish) | Deploys the Solr search engine onto the GlassFish application server.
+[drupal-remake](scripts/drupal-remake) | Rebuilds a Drupal site using the site's most recent Drush makefile.
+[resync-drupal-db-for-dev](scripts/resync-drupal-db-for-dev) | Refreshes any development site from a staging/QA or production site, setting everything for development and disabling things not useful for development.
