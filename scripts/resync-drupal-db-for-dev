@@ -9,11 +9,12 @@
 #   1. Saves a cache-cleared dump of the destination database (DB) as a backup.
 #   2. Overwrites the destination DB with the source's.
 #   3. Updates the DB schema.
-#   4. Disables modules that shouldn't be enabled during development.
-#   5. Enables modules that are helpful for development.
-#   6. Clears all caches.
-#   7. Overwrites the destination's files directory with the source's.
-#   8. Runs cron.
+#   4. Imports the latest configuration saved in code.
+#   5. Disables modules that shouldn't be enabled during development.
+#   6. Enables modules that are helpful for development.
+#   7. Clears all caches.
+#   8. Overwrites the destination's files directory with the source's.
+#   9. Runs cron.
 #
 # Developers should be doing all of this every time they refresh their DBs.
 # Because it's tricky and time-consuming to do all of these manually, some of
@@ -37,6 +38,7 @@
 # Assumptions:
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
+#   * The latest authoritative configuration is in the configuration directory.
 #   * Views, Devel, Maillog / Mail Developer and Admin Toolbar are installed.
 #   * Sudo access is available to properly set files directory permissions.
 #   * The following settings should be in your settings.local.php:
@@ -125,6 +127,9 @@ $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
 $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
+
+$ECHO "Import the latest configuration saved in code..."
+$DRUSH $DESTINATION config-import -y
 
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION pm-uninstall -y $MODULES_DISABLE
