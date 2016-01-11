@@ -1,7 +1,31 @@
 #!/bin/bash
 #############################################################################
 # Purpose:
-#   Resynchronize a Drupal development site from Staging, Production, etc.
+#   Refresh a development site from a staging/QA or production site, and then
+#   devify it (i.e. make it suitable for development).
+#
+#   It performs the following tasks:
+#
+#   1. Saves a cache-cleared dump of the destination database (DB) as a backup.
+#   2. Overwrites the destination DB with the source's.
+#   3. Updates the DB schema.
+#   4. Disables modules that shouldn't be enabled during development.
+#   5. Enables modules that are helpful for development.
+#   6. Clears all caches.
+#   7. Overwrites the destination's files directory with the source's.
+#   8. Runs cron.
+#
+# Developers should be doing all of this every time they refresh their DBs.
+# Because it's tricky and time-consuming to do all of these manually, some of
+# the steps are often missed. This leads to configuration mismanagement issues
+# between development sandboxes and other environments. I'd recommend that this
+# script, or another one like it, be run frequently on the authoritative
+# development/integration site (Dev) and local development sites to prevent
+# such mishaps.
+#
+# The script tries to be as versatile as possible, working in a variety of
+# GNU/Linux environments. If it doesn't work for yours, please submit a merge
+# request so that we can get support added.
 #
 # Usage:
 #   resync-drupal-db-for-dev <SOURCE_DRUSH_ALIAS> <DESTINATION_DRUSH_ALIAS> [<MODULES_DISABLE>]
@@ -14,7 +38,7 @@
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
 #   * Views, Devel, Maillog / Mail Developer and Admin Toolbar are installed.
-#   * Sudo access is available to properly handle files directory permissions.
+#   * Sudo access is available to properly set files directory permissions.
 #   * The following settings should be in your settings.local.php:
 #       $config['system.logging']['error_level'] = 'verbose';
 #       $config['system.performance']['css']['preprocess'] = FALSE;
@@ -27,10 +51,8 @@
 #     Viewer utility.  See https://drupal.org/project/drush_sql_sync_pipe for
 #     details.
 #
-# Author:
-#   Colan Schwartz - http://colans.net/
-# Licence:
-#   GPLv3
+# Author: Colan Schwartz - http://colans.net/
+# Licence: GPLv3
 #############################################################################
 
 # Set command paths.
