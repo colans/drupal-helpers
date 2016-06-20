@@ -90,6 +90,7 @@ MODULES_ADVAGG="advagg advagg_js_compress advagg_mod advagg_css_compress advagg_
 MODULES_DISABLE="admin_menu_dropdown backup_migrate performance entitycache navbar overlay toolbar securepages $MODULES_ACQUIA $MODULES_ADVAGG $3"
 
 # Set file locations from Drush configuration.
+ROOT=$($DRUSH drupal-directory $DESTINATION)
 PUBLIC=$($DRUSH site-alias $DESTINATION | $GREP '%files' | $CUT -f4 -d"'")
 PRIVATE=$($DRUSH site-alias $DESTINATION | $GREP '%private' | $CUT -f4 -d"'")
 TEMP=$($DRUSH site-alias $DESTINATION | $GREP '%temp' | $CUT -f4 -d"'")
@@ -114,7 +115,7 @@ $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 
 # The registry rebuild sometimes requires that these be set first.
 $ECHO "Set the destination's file locations..."
-$MKDIR -p $PUBLIC $PRIVATE $TEMP
+$MKDIR -p $ROOT$PUBLIC $ROOT$PRIVATE $TEMP
 $DRUSH $DESTINATION vset file_public_path $PUBLIC
 $DRUSH $DESTINATION vset file_private_path $PRIVATE
 $DRUSH $DESTINATION vset file_temporary_path $TEMP
