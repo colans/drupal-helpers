@@ -106,11 +106,8 @@ $ECHO "Sync the source site's database to the destination..."
 # Always download and use Drush SQL Sync Pipe instead of Drush's standard
 # sql-sync command.  It's more efficient, skips cache data by default, and
 # actually works on Pantheon sites.
-#
-# The "--dump" command would be useful for local caching, but it's currently
-# broken.  See https://drupal.org/node/2286697 for details.
 $DRUSH dl drush_sql_sync_pipe --destination=$HOME/.drush -y
-$DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
+$DRUSH sql-sync-pipe --progress --sanitize --dump $SOURCE $DESTINATION
 
 # The registry rebuild sometimes requires that these be set first.
 $ECHO "Set the destination's file locations..."
