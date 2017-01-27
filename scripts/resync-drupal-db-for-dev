@@ -40,7 +40,7 @@
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
 #   * The latest authoritative configuration is in the configuration directory.
-#   * Views, Devel, Maillog / Mail Developer and Admin Toolbar are installed.
+#   * Views, Devel, Maillog / Mail Developer, Configuration Update Manager and Admin Toolbar are installed.
 #   * Sudo access is available to properly set files directory permissions.
 #   * The following settings should be in your settings.local.php:
 #       $config['system.logging']['error_level'] = 'verbose';
