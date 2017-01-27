@@ -39,7 +39,13 @@
 # Assumptions:
 #   * The command paths below are correct.
 #   * Drush is installed locally and remotely (if the source is remote).
-#   * The latest authoritative configuration is in the configuration directory.
+#   * If you'll want to import it, the latest authoritative configuration is in the configuration directory.
+#   * If you'll want to synchronize files, the source files directory must be defined in its Drush alias file.
+#       e.g. $aliases['prod'] = array(
+#              'path-aliases' => array(
+#                '%files' => '/absolute/path/to/files',
+#              ),
+#            );
 #   * Views, Devel, Maillog / Mail Developer, Configuration Update Manager and Admin Toolbar are installed.
 #   * Sudo access is available to properly set files directory permissions.
 #   * The following settings should be in your settings.local.php:
