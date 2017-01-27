@@ -128,8 +128,8 @@ $DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
 $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
 
-$ECHO "Import the latest configuration saved in code..."
-$DRUSH $DESTINATION config-import -y
+$ECHO "Potentially importing the latest configuration saved in code..."
+$DRUSH $DESTINATION config-import
 
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION pm-uninstall -y $MODULES_DISABLE
