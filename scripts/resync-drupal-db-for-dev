@@ -122,9 +122,7 @@ $ECHO "Sync the source site's database to the destination..."
 # actually works on Pantheon sites.
 $DRUSH pm-download drush_sql_sync_pipe --destination=$HOME/.drush -y
 $DRUSH cache-clear drush
-# The "--dump" command would be useful for local caching, but it's currently
-# broken.  See https://drupal.org/node/2286697 for details.
-$DRUSH sql-sync-pipe --progress --sanitize $SOURCE $DESTINATION
+$DRUSH sql-sync-pipe --progress --sanitize --dump $SOURCE $DESTINATION
 
 $ECHO "Updating the database schema..."
 $DRUSH $DESTINATION updatedb -y
