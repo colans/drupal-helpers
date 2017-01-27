@@ -135,7 +135,7 @@ $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION pm-uninstall -y $MODULES_DISABLE
 
 $ECHO "Enabling extra modules for development..."
-$DRUSH $DESTINATION pm-enable -y devel update admin_toolbar views_ui dblog maillog
+$DRUSH $DESTINATION pm-enable -y devel update admin_toolbar views_ui dblog maillog config_update_ui
 
 $ECHO "Clearing the destination site's cache..."
 $DRUSH $DESTINATION cache-rebuild
