@@ -9,12 +9,13 @@
 #   1. Saves a cache-cleared dump of the destination database (DB) as a backup.
 #   2. Overwrites the destination DB with the source's.
 #   3. Updates the DB schema.
-#   4. Imports the latest configuration saved in code.
-#   5. Disables modules that shouldn't be enabled during development.
-#   6. Enables modules that are helpful for development.
-#   7. Clears all caches.
-#   8. Overwrites the destination's files directory with the source's.
-#   9. Runs cron.
+#   4. Imports the latest configuration saved in code (if confirmed).
+#   5. Applies pending entity schema updates.
+#   6. Disables modules that shouldn't be enabled during development.
+#   7. Enables modules that are helpful for development.
+#   8. Clears all caches.
+#   9. Overwrites the destination's files directory with the source's.
+#   10. Runs cron.
 #
 # Developers should be doing all of this every time they refresh their DBs.
 # Because it's tricky and time-consuming to do all of these manually, some of
@@ -130,6 +131,9 @@ $DRUSH $DESTINATION updatedb -y
 
 $ECHO "Potentially importing the latest configuration saved in code..."
 $DRUSH $DESTINATION config-import
+
+$ECHO "Applying pending entity schema updates..."
+$DRUSH $DESTINATION entity-updates
 
 $ECHO "Disabling modules not meant for development..."
 $DRUSH $DESTINATION pm-uninstall -y $MODULES_DISABLE
