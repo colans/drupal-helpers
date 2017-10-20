@@ -15,7 +15,8 @@
 #   7. Enables modules that are helpful for development.
 #   8. Clears all caches.
 #   9. Overwrites the destination's files directory with the source's.
-#   10. Runs cron.
+#   10. Produces a one-time login URL for direct access to the admin interface.
+#   11. Runs cron.
 #
 # Developers should be doing all of this every time they refresh their DBs.
 # Because it's tricky and time-consuming to do all of these manually, some of
@@ -159,6 +160,9 @@ $SUDO $CHOWN -R $USER $FILES
 $DRUSH -r $FILES rsync --exclude-paths=private:css:js:advagg_js:advagg_css:styles:ctools:xmlsitemap $SOURCE:%files $FILES
 # And then set it back to the Web user.
 $SUDO $CHOWN -R $USER_WEB $FILES
+
+$ECHO "Get a URL for automatically logging into the admin interface."
+$DRUSH $DESTINATION uli
 
 $ECHO "All done!"
 $ECHO "End time: $($DATE +%T)"
