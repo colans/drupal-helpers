@@ -12,7 +12,7 @@ Authoritative project (for creating issues, merge/pull requests and the wiki):
 Mirror (issues, merge/pull requests and the wiki are disabled):
 * GitHub: https://github.com/colans/drupal-helpers
 
-Please be aware that each branch represents compatibility with a Drupal core version.  So the *master* branch contains code for the latest stable Drupal release.  For example, at the time of this writing, *master* works with Drupal 8.0.x while *drupal-7.x* works with Drupal 7.
+Please be aware that each branch represents compatibility with a Drupal core version.  So the *master* branch contains code for the latest stable Drupal release.  For example, at the time of this writing, *master* works with Drupal 8.x while *drupal-7.x* works with Drupal 7.
 
 The following items are included:
 
