@@ -152,14 +152,19 @@ $DRUSH $DESTINATION cache-rebuild
 $ECHO "Run any periodic tasks that should be run..."
 $DRUSH $DESTINATION cron
 
-$ECHO "Updating the public files directory..."
-FILES=$($DRUSH dd $DESTINATION:%files)
-# Transfer files ownership to the current user for the rsync.
-$SUDO $CHOWN -R $USER $FILES
-# Perform the transfer of files excluding private and cache files.
-$DRUSH -r $FILES rsync --exclude-paths=private:css:js:advagg_js:advagg_css:styles:ctools:xmlsitemap $SOURCE:%files $FILES
-# And then set it back to the Web user.
-$SUDO $CHOWN -R $USER_WEB $FILES
+read -p "Synchronize all of the destination's files from the source? Your probably don't need this. (y/N)" -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  $ECHO "Updating the public files directory..."
+  FILES=$($DRUSH dd $DESTINATION:%files)
+  # Transfer files ownership to the current user for the rsync.
+  $SUDO $CHOWN -R $USER $FILES
+  # Perform the transfer of files excluding private and cache files.
+  $DRUSH -r $FILES rsync --exclude-paths=private:css:js:advagg_js:advagg_css:styles:ctools:xmlsitemap $SOURCE:%files $FILES
+  # And then set it back to the Web user.
+  $SUDO $CHOWN -R $USER_WEB $FILES
+fi
 
 $ECHO "Get a URL for automatically logging into the admin interface."
 $DRUSH $DESTINATION uli
